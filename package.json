@@ -1,9 +1,9 @@
 {
-  "name" : "$NAME",
-  "version" : "0.0.0",
-  "description" : "$DESCRIPTION",
+  "name": "$NAME",
+  "version": "0.0.0",
+  "description": "$DESCRIPTION",
   "private": true,
-  "main" : "index.js",
+  "main": "index.js",
   "scripts": {
     "lint": "xo src/**",
     "inspect": "jsinspect",
@@ -11,14 +11,14 @@
     "test": "ava",
     "test-cov": "nyc ava"
   },
-  "engines" : {
+  "engines": {
     "node": ">=0.10.25 <0.12",
     "express": "3.5.1"
   },
-  "oracleMobile" : {
-    "dependencies" : {
-      "apis" : {},
-      "connectors" : {}
+  "oracleMobile": {
+    "dependencies": {
+      "apis": {},
+      "connectors": {}
     }
   },
   "dependencies": {},
