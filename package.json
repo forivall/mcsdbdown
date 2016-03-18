@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "$DESCRIPTION",
   "private": true,
-  "main": "index.js",
+  "main": "$NAME.js",
   "scripts": {
     "lint": "xo src/**",
     "inspect": "jsinspect",
