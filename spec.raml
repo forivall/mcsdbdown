@@ -1,0 +1,19 @@
+#%RAML 0.8
+title: $NAME
+description: $DESCRIPTION
+version: 0.1.0
+baseUri: /mobile/custom/$NAME
+protocols: [HTTPS]
+mediaType: "application/json"
+/echo:
+  displayName: echo
+  get:
+    protocols: [HTTPS]
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "hello": "world"
+              }
