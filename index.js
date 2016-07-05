@@ -48,7 +48,7 @@ McsDbDOWN.prototype._put = function (key, value, options, callback) {
   this._sdk.database.merge(this.location, {
     key: key,
     value: value
-  }, createOpts)
+  }, createOpts, {json: true})
   .then(function () {
     callback();
   })
@@ -60,7 +60,7 @@ McsDbDOWN.prototype._put = function (key, value, options, callback) {
 McsDbDOWN.prototype._get = function (key, options, callback) {
   this._sdk.database.get(this.location, {
     key: key
-  })
+  }, {}, {json: true})
   .then(function (resp) {
     callback(resp.result.items[0]);
   })
@@ -72,7 +72,7 @@ McsDbDOWN.prototype._get = function (key, options, callback) {
 McsDbDOWN.prototype._del = function (key, options, callback) {
   this._sdk.database.delete(this.location, {
     key: key
-  })
+  }, {}, {json: true})
   .then(function () {
     callback();
   })
