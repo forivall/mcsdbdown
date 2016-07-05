@@ -58,15 +58,13 @@ McsDbDOWN.prototype._put = function (key, value, options, callback) {
 };
 
 McsDbDOWN.prototype._get = function (key, options, callback) {
-  this._sdk.database.get(this.location, {
-    key: key
-  }, {}, {json: true})
+  this._sdk.database.get(this.location, key, {}, {json: true})
   .then(function (resp) {
     if (resp.result.items.length === 0) {
       // 'NotFound' error, consistent with LevelDOWN API
       callback(new Error('NotFound'));
     }
-    callback(null, resp.result.items[0]);
+    callback(null, resp.result.items[0].value);
   })
   .catch(function (err) {
     callback(err);
