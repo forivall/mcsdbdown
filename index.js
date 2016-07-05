@@ -62,6 +62,10 @@ McsDbDOWN.prototype._get = function (key, options, callback) {
     key: key
   }, {}, {json: true})
   .then(function (resp) {
+    if (resp.result.items.length === 0) {
+      // 'NotFound' error, consistent with LevelDOWN API
+      callback(new Error('NotFound'));
+    }
     callback(null, resp.result.items[0]);
   })
   .catch(function (err) {
