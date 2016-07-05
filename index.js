@@ -1,5 +1,6 @@
 
 const util = require('util');
+const padEnd = require('lodash.padend');
 
 const AbstractLevelDOWN = require('abstract-leveldown').AbstractLevelDOWN;
 
@@ -45,6 +46,9 @@ McsDbDOWN.prototype._open = function (options, callback) {
 };
 
 McsDbDOWN.prototype._put = function (key, value, options, callback) {
+  if (value.length < 4096) {
+    value = padEnd(value, 4096); // force CLOB
+  }
   this._sdk.database.merge(this.location, {
     key: key,
     value: value
@@ -53,6 +57,7 @@ McsDbDOWN.prototype._put = function (key, value, options, callback) {
     callback();
   })
   .catch(function (err) {
+    console.log(err.stack || err);
     callback(err);
   });
 };
@@ -73,7 +78,10 @@ McsDbDOWN.prototype._get = function (key, options, callback) {
 
 McsDbDOWN.prototype._del = function (key, options, callback) {
   this._sdk.database.delete(this.location, key, {}, {json: true})
-  .then(function () {
+  .then(function (resp) {
+    if (resp.result.rowCount === 0) {
+      console.log('Warning: deleted key not found');
+    }
     callback();
   })
   .catch(function (err) {
