@@ -35,7 +35,6 @@ McsDbDOWN.prototype.getMetadata = function () {
 };
 
 McsDbDOWN.prototype._open = function (options, callback) {
-  console.log(options);
   if (options.sdk) {
     this._sdk = options.sdk;
   }
