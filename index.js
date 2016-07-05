@@ -62,7 +62,7 @@ McsDbDOWN.prototype._get = function (key, options, callback) {
     key: key
   }, {}, {json: true})
   .then(function (resp) {
-    callback(resp.result.items[0]);
+    callback(null, resp.result.items[0]);
   })
   .catch(function (err) {
     callback(err);
