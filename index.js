@@ -72,9 +72,7 @@ McsDbDOWN.prototype._get = function (key, options, callback) {
 };
 
 McsDbDOWN.prototype._del = function (key, options, callback) {
-  this._sdk.database.delete(this.location, {
-    key: key
-  }, {}, {json: true})
+  this._sdk.database.delete(this.location, key, {}, {json: true})
   .then(function () {
     callback();
   })
