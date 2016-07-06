@@ -1,6 +1,15 @@
 
 const util = require('util');
-const padEnd = require('lodash.padend');
+
+const CHUNK_SIZE = 4000;
+// max columns in oracle db is 1000
+const MAX_CHUNKS = 992; // = (1<<9) + (1<<8) + (1<<7) + (1<<6) + (1<<5)
+const MAX_VALUE_SIZE = 4000 * 992;
+
+const zeroPadStart4 = function (n) {
+  var s = String(n);
+  return '0000'.slice(s.length) + s;
+};
 
 const AbstractLevelDOWN = require('abstract-leveldown').AbstractLevelDOWN;
 
@@ -23,15 +32,24 @@ function McsDbDOWN(location) {
 util.inherits(McsDbDOWN, AbstractLevelDOWN);
 
 McsDbDOWN.prototype.getMetadata = function () {
+  var columns = [
+    {name: 'key', type: 'string', size: 1024}, // VARCHAR2(1024)
+    {name: 'value', type: 'string', size: 4000}
+  ];
+
+  for (var i = 0; i < MAX_CHUNKS; i++) {
+    columns.push({name: 'value_ck' + zeroPadStart4(i), type: 'string', size: 4000});
+  }
+  columns.push(
+    {name: 'chunks', type: 'integer', size: 16},
+    {name: 'modifiedOn', type: 'dateTime'}
+  );
+
   return {
     name: this.location,
-    columns: [
-      {name: 'key', type: 'string', size: 1024}, // VARCHAR2(1024)
-      {name: 'value', type: 'string', size: 4096}, // > 4000 bytes = CLOB
-      {name: 'modifiedOn', type: 'dateTime'}
-    ],
+    columns: columns,
     primaryKeys: ['key'],
-    requiredColumns: ['key', 'value']
+    requiredColumns: ['key']
   };
 };
 
@@ -46,13 +64,27 @@ McsDbDOWN.prototype._open = function (options, callback) {
 };
 
 McsDbDOWN.prototype._put = function (key, value, options, callback) {
-  if (value.length < 4096) {
-    value = padEnd(value, 4096); // force CLOB
+  if (value.length > MAX_VALUE_SIZE) {
+    callback(new Error('Value is too large to be stored'));
+    return;
   }
-  this._sdk.database.merge(this.location, {
-    key: key,
-    value: value
-  }, createOpts, {json: true})
+
+  var insert = {
+    key: key
+  };
+  if (value.length <= 4000) {
+    insert.value = value;
+    insert.chunks = 0;
+  } else {
+    var l = value.length;
+    var nchunks = Math.ceil(l / CHUNK_SIZE);
+    for (var i = 0; i < nchunks; i++) {
+      var start = i * CHUNK_SIZE;
+      insert['value_ck' + zeroPadStart4(i)] = value.slice(start, start + CHUNK_SIZE);
+    }
+    insert.chunks = nchunks;
+  }
+  this._sdk.database.merge(this.location, insert, createOpts, {json: true})
   .then(function () {
     callback();
   })
@@ -69,7 +101,19 @@ McsDbDOWN.prototype._get = function (key, options, callback) {
       // 'NotFound' error, consistent with LevelDOWN API
       callback(new Error('NotFound'));
     }
-    callback(null, resp.result.items[0].value);
+    var item = resp.result.items[0];
+    var value;
+    if (item.chunks === 0 || item.chunks == null) {
+      value = item.value;
+    } else {
+      value = '';
+
+      var nchunks = item.chunks;
+      for (var i = 0; i < nchunks; i++) {
+        value += item['value_ck' + zeroPadStart4(i)];
+      }
+    }
+    callback(null, value);
   })
   .catch(function (err) {
     callback(err);

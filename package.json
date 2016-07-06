@@ -21,8 +21,7 @@
     }
   },
   "dependencies": {
-    "abstract-leveldown": "^2.6.0",
-    "lodash.padend": "^4.5.0"
+    "abstract-leveldown": "^2.6.0"
   },
   "devDependencies": {
     "ava": "^0.14.0",
