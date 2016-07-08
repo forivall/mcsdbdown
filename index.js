@@ -1,7 +1,9 @@
 
 const util = require('util');
 
-const CHUNK_SIZE = 4000;
+// max size is _supposed_ to be 4000, but something in doesn't allow that consistently
+// aka: yay, more oracle bugs
+const CHUNK_SIZE = 3840; // = (1<<11) + (1<<10) + (1<<9) + (1<<8)
 // max columns in oracle db is 1000
 const MAX_CHUNKS = 992; // = (1<<9) + (1<<8) + (1<<7) + (1<<6) + (1<<5)
 const MAX_VALUE_SIZE = 4000 * 992;
