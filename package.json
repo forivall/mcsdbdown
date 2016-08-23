@@ -1,6 +1,6 @@
 {
   "name": "mcsdbdown",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A backend for levelup that uses MCS's Database Access API",
   "main": "index.js",
   "scripts": {
