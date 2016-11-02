@@ -91,7 +91,6 @@ McsDbDOWN.prototype._put = function (key, value, options, callback) {
     callback();
   })
   .catch(function (err) {
-    console.log(err.stack || err);
     callback(err);
   });
 };
