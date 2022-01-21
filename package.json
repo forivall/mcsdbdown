@@ -24,7 +24,7 @@
     "abstract-leveldown": "^2.6.0"
   },
   "devDependencies": {
-    "ava": "^0.14.0",
+    "ava": "^4.0.1",
     "jsinspect": "^0.8.0",
     "nyc": "^6.4.4",
     "xo": "^0.15.1"
