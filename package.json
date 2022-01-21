@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "ava": "^0.14.0",
-    "jsinspect": "^0.8.0",
+    "jsinspect": "^0.12.7",
     "nyc": "^6.4.4",
     "xo": "^0.15.1"
   },
